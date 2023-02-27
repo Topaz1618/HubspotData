@@ -1,0 +1,51 @@
+version: '3' # Version number
+
+services:
+#  redis:    # 应用名称
+#    image: redis   #使用镜像
+#    container_name: hubspot_redis       # 容器名称
+#    restart: always                # 定义容器在失败或关闭后自动重启的行为
+#    command: redis-server
+#    ports:                         # 端口映射配置
+#      - "6379:6379"
+#    networks:
+#      - hubspot_net
+#    environment:
+#      REDIS_PASSWORD: yourpassword    # Redis 密码
+
+#  database:                                # 服务名称
+#    image: mysql:5.7                       # 使用的镜像
+#    container_name: test-db                # 容器名称
+#    ports:                                 # 端口映射配置
+#      - "3307:3306"
+#    restart: always                        # 重启方式
+#    networks:                              # 服务连接到的指定网络
+#      - hubspot_net
+#    environment:                           # 配置环境变量
+#      MYSQL_DATABASE: "hotspotDB"
+#      MYSQL_ROOT_PASSWORD: "12345678"
+#      MYSQL_ROOT_HOST: "%"
+#    command: mysql -hlocalhost -uroot -p@QWEqwe123  # 定义容器启动时要运行的命令
+#    volumes:                               # 配置容器内文件或目录挂载到宿主机
+#      - "/home/db/test/test_db:/var/lib/mysql"   # /path/on/host:/path/in/container
+#      - "/home/dbtest/test_db/conf/my.cnf:/etc/my.cnf"
+#      - "/home/db/test/test_db/init:/docker-entrypoint-initdb.d/"
+
+  web:
+    build: .
+    restart: always
+    command: python app.py
+
+    ports:
+      - "8001:5000"
+    volumes:
+      - .:/app
+#      - .aws:/root/.aws
+#    depends_on:      # 配置当前服务依赖的服务
+#      - redis
+#    networks:
+#      - up_net
+#
+#networks:
+#  up_net:
+#    external: true

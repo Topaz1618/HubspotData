@@ -1,0 +1,54 @@
+version: '3' # Version number
+
+services:
+  redis:    # Service name
+    image: redis   # Specified the image name
+    container_name: hubspot_redis       # container name
+    restart: always                # Define the action after container close
+    command: redis-server
+    ports:                         # Port mapping. Your local port: container port
+      - "6379:6379"
+    networks:
+      - hubspot_net
+#    environment:
+#      REDIS_PASSWORD: 123456    # Redis Password
+
+  mysql:                                # Service name
+    image: mysql:5.7                       #  Specified the image you use
+    container_name: hotspotDB                # container name
+    ports:                                 # Port mapping. <Your local port>:<Container port>
+      - "3307:3306"
+    restart: always                        # Define the action after container close
+    networks:                              # Specified the network application use
+      - hubspot_net                        # Specified the network name be used
+    environment:                           # set env varible
+      MYSQL_DATABASE: "hotspotDB"
+      MYSQL_ROOT_PASSWORD: "12345678"
+      MYSQL_ROOT_HOST: "%"
+    command: mysql -hlocalhost -uroot -p123456  # Defind the command need to run when container start
+    volumes:                               # Mapping your host path and container path
+      - "/var/lib/mysql/hotspotDB:/var/lib/mysql"   # /path/on/host:/path/in/container
+      - "/var/lib/mysql/hotspotDB/conf/my.cnf:/etc/my.cnf"
+      - "/var/lib/mysql/hotspotDB/init:/docker-entrypoint-initdb.d/" # Placed SQL scripts
+
+  web:
+    build: .
+    restart: always
+    command: python app.py
+
+    ports:
+      - "8001:5000"
+    volumes:
+      - .:/app
+#      - .aws:/root/.aws
+    depends_on:      # Configure the services that current application depands
+      - redis
+      - mysql
+    networks:
+      - hubspot_net # Specified the network name be used
+
+# Connect your application's containers together so that they can communicate
+# with each other using the container names rather than IP addresses.
+networks: # define networks
+  hubspot_net:  # network name
+    external: true # Marked as external, which means that Docker Compose will not attempt to create it

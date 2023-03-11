@@ -1,12 +1,12 @@
-version: '3' # Version number
+version: '3' # The version number
 
 services:
   redis:    # Service name
-    image: redis   # Specified the image name
-    container_name: hubspot_redis       # container name
-    restart: always                # Define the action after container close
+    image: redis   # The Docker image to use for this service
+    container_name: hubspot_redis       # Container Name
+    restart: always                #  The restart policy for the container
     command: redis-server
-    ports:                         # Port mapping. Your local port: container port
+    ports:                         # Port mapping. <Your Local Port>:<Container Port>
       - "6379:6379"
     networks:
       - hubspot_net
@@ -14,20 +14,20 @@ services:
 #      REDIS_PASSWORD: 123456    # Redis Password
 
   mysql:                                # Service name
-    image: mysql:5.7                       #  Specified the image you use
-    container_name: hotspotDB                # container name
-    ports:                                 # Port mapping. <Your local port>:<Container port>
+    image: mysql:8.0                    # The Docker image to use for this service
+    container_name: hotspotDB           # Container Name
+    ports:                              # Port mapping. <Your Local Port>:<Container Port>
       - "3307:3306"
-    restart: always                        # Define the action after container close
+    restart: always                        # The restart policy for the container
     networks:                              # Specified the network application use
       - hubspot_net                        # Specified the network name be used
     environment:                           # set env varible
       MYSQL_DATABASE: "hotspotDB"
       MYSQL_ROOT_PASSWORD: "12345678"
       MYSQL_ROOT_HOST: "%"
-    command: mysql -hlocalhost -uroot -p123456  # Defind the command need to run when container start
+    command: mysql -hlocalhost -uroot -p123456  # The command to run when the container starts
     volumes:                               # Mapping your host path and container path
-      - "/var/lib/mysql/hotspotDB:/var/lib/mysql"   # /path/on/host:/path/in/container
+      - "/var/lib/mysql/hotspotDB:/var/lib/mysql"   # </path/on/host>:</path/in/container>
       - "/var/lib/mysql/hotspotDB/conf/my.cnf:/etc/my.cnf"
       - "/var/lib/mysql/hotspotDB/init:/docker-entrypoint-initdb.d/" # Placed SQL scripts
 
@@ -41,14 +41,16 @@ services:
     volumes:
       - .:/app
 #      - .aws:/root/.aws
-    depends_on:      # Configure the services that current application depands
+    depends_on:      # Configure the services that current application depends on
       - redis
       - mysql
     networks:
       - hubspot_net # Specified the network name be used
 
 # Connect your application's containers together so that they can communicate
-# with each other using the container names rather than IP addresses.
-networks: # define networks
-  hubspot_net:  # network name
-    external: true # Marked as external, which means that Docker Compose will not attempt to create it
+# With each other using the container names rather than IP addresses.
+networks: # Define networks
+  hubspot_net:  # Network name
+    external:
+      name: hubspot_net # If the network already exists, it will be used. If it doesn't exist, Docker Compose will create it.
+#    external: true # If the network already exists, it will be used. If it doesn't exist, Docker Compose will not attempt to create it

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.22.0 (955b78124)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mysql
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml
+        kompose.version: 1.22.0 (955b78124)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/hubspot_net: "true"
+        io.kompose.service: mysql
+    spec:
+      containers:
+        - args:
+            - mysql
+            - -hlocalhost
+            - -uroot
+            - -p123456
+          env:
+            - name: MYSQL_DATABASE
+              value: hotspotDB
+            - name: MYSQL_ROOT_HOST
+              value: '%'
+            - name: MYSQL_ROOT_PASSWORD
+              value: "12345678"
+          image: mysql:5.7
+          name: hotspotdb
+          ports:
+            - containerPort: 3306
+          resources: {}
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mysql-claim0
+            - mountPath: /etc/my.cnf
+              name: mysql-claim1
+            - mountPath: /docker-entrypoint-initdb.d/
+              name: mysql-claim2
+      restartPolicy: Always
+      volumes:
+        - name: mysql-claim0
+          persistentVolumeClaim:
+            claimName: mysql-claim0
+        - name: mysql-claim1
+          persistentVolumeClaim:
+            claimName: mysql-claim1
+        - name: mysql-claim2
+          persistentVolumeClaim:
+            claimName: mysql-claim2
+status: {}

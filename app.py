@@ -10,7 +10,7 @@ def hello_world():
 
 @app.route("/test_dev")
 def test_dev():
-    return "Deployment success! OMG! "
+    return "Deployment success 1 "
 
 
 if __name__ == '__main__':

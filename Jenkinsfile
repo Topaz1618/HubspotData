@@ -1,26 +1,25 @@
 pipeline {
-  agent any
-
-  stages {
-    stage('Checkout') {
-      steps {
-        git url: 'https://github.com/Topaz1618/HubspotData.git', branch: 'master'
-      }
+    agent any
+    stages {
+        stage('Pull from GitHub') {
+            steps {
+                git 'https://github.com/Topaz1618/HubspotData.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'echo "Building..."'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'echo "Testing..."'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'echo "Deploying..."'
+            }
+        }
     }
-    stage('Build') {
-      steps {
-        sh 'docker build -t myapp .'
-      }
-    }
-    stage('Test') {
-      steps {
-        sh 'docker run --rm myapp pytest'
-      }
-    }
-    stage('Deploy') {
-      steps {
-        sh 'docker-compose up -d'
-      }
-    }
-  }
 }

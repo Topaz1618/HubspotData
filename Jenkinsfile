@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Pull from GitHub') {
             steps {
-                git 'https://github.com/Topaz1618/HubspotData.git', branch: 'master'
+                git url: 'https://github.com/Topaz1618/HubspotData.git', branch: 'master'
             }
         }
         stage('Build') {
